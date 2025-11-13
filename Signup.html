@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign Up</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="signup.css">
+    <script src="script.js" defer></script>
+</head>
+
+<body class="signup">
+    <div class="container">
+        <div class="signup-card">
+            <h2 class="container-title">🍩 Create Your Sweet Account 🧁</h2>
+            <form action="/dashboard.html" class="signupForm">
+                <div class="input-group">
+                    <label for="email" class="label">Email</label>
+                    <input type="email" id="email" class="input" placeholder="Enter your email">
+                    <span class="error-message"></span>
+                </div>
+                <br>
+                <div class="input-group">
+                    <label for="username" class="label">Username</label>
+                    <input type="text" id="username" class="input" placeholder="Choose a username">
+                    <span class="error-message"></span>
+                </div>
+                <br>
+                <div class="input-group">
+                    <label for="password" class="label">Password</label>
+                    <input type="password" id="password" class="input" placeholder="Enter a strong password">
+                    <span class="error-message"></span>
+                </div>
+                <br>
+                <div class="input-group">
+                    <label for="confirm-password" class="label">Confirm Password</label>
+                    <input type="password" id="confirm-password" class="input" placeholder="Confirm your password">
+                    <span class="error-message"></span>
+                </div>
+                <br>
+                <button class="button" type="submit">Create Account</button>
+                <button class="button button-guest" type="button" id="guestBtn">Continue as Guest</button>
+            </form>
+            <div class="login-link-container">
+                <p class="login-text">Already have an account? <a href="Login.html" class="login-link">Log In</a></p>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
