@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Restaurant Main Store</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="shop.js" defer></script>
+</head>
+<body class="dashboard">
+    <nav class="navbar">
+        <div class="nav-container">
+            <h1 class="nav-title">🍰 Sweet Bakery</h1>
+            <div class="nav-links">
+                <span class="user-greeting" id="userGreeting"></span>
+                <button class="button button-logout" id="logoutBtn">Logout</button>
+            </div>
+        </div>
+    </nav>
+
+    <div class="dashboard-container">
+        <section class="hero">
+            <h2>Welcome to Our Sweet Bakery</h2>
+            <p>Delicious treats made fresh daily</p>
+        </section>
+
+        <section class="categories">
+            <h2>Shop by Category</h2>
+            <div class="category-grid">
+                <div class="category-card" onclick="goToCategory('Cakes')">
+                    <div class="category-icon">🎂</div>
+                    <h3>Cakes</h3>
+                    <p>Delicious homemade cakes</p>
+                </div>
+                <div class="category-card" onclick="goToCategory('Cookies')">
+                    <div class="category-icon">🍪</div>
+                    <h3>Cookies</h3>
+                    <p>Fresh baked cookies</p>
+                </div>
+                <div class="category-card" onclick="goToCategory('Pies')">
+                    <div class="category-icon">🥧</div>
+                    <h3>Pies</h3>
+                    <p>Delightful pies and tarts</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="featured">
+            <h2>Featured Items</h2>
+            <div class="featured-grid">
+                <div class="featured-item">
+                    <div class="item-image">🎂</div>
+                    <h3>Classic Chocolate Cake</h3>
+                    <p>$24.99</p>
+                </div>
+                <div class="featured-item">
+                    <div class="item-image">🍪</div>
+                    <h3>Chocolate Chip Cookies</h3>
+                    <p>$8.99</p>
+                </div>
+                <div class="featured-item">
+                    <div class="item-image">🥧</div>
+                    <h3>Apple Pie</h3>
+                    <p>$16.99</p>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <script>
+        // Display user greeting
+        function displayUserGreeting() {
+            const userGreeting = document.getElementById('userGreeting');
+            const userData = localStorage.getItem('user');
+            if (userData) {
+                const user = JSON.parse(userData);
+                const greeting = user.guest ? `Welcome, Guest!` : `Welcome, ${user.username}!`;
+                userGreeting.textContent = greeting;
+            }
+        }
+
+        // Navigate to category
+        function goToCategory(category) {
+            window.location.href = `${category}/index.html`;
+        }
+
+        // Logout functionality
+        document.getElementById('logoutBtn').addEventListener('click', function() {
+            localStorage.removeItem('auth');
+            localStorage.removeItem('user');
+            window.location.href = 'Login.html';
+        });
+
+        // Initialize on page load
+        window.addEventListener('DOMContentLoaded', function() {
+            displayUserGreeting();
+            
+            // Check if user is authenticated
+            const auth = localStorage.getItem('auth');
+            if (!auth) {
+                window.location.href = 'Login.html';
+            }
+        });
+    </script>
+</body>
+</html>
