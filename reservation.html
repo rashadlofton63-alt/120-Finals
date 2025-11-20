@@ -44,7 +44,6 @@
     </div>
 
     <script>
-        // Helper to read/write reservations (stored as array in localStorage)
         function getReservations() {
             try {
                 const raw = localStorage.getItem('reservations');
@@ -58,7 +57,6 @@
             localStorage.setItem('reservations', JSON.stringify(arr));
         }
 
-        // On load: determine user state and prefill name if logged-in (not guest)
         window.addEventListener('DOMContentLoaded', function() {
             const userData = localStorage.getItem('user');
             const nameInput = document.getElementById('resName');
@@ -69,17 +67,14 @@
                 try { currentUser = JSON.parse(userData); } catch (e) { currentUser = null; }
             }
 
-            // If logged-in and not a guest, prefill name and show saved reservations
             if (currentUser && !currentUser.guest) {
                 if (currentUser.username) nameInput.value = currentUser.username;
                 renderSavedReservations(currentUser.username);
             } else {
-                // Guest: leave name blank and hide saved reservations section
                 nameInput.value = '';
                 document.getElementById('savedReservations').style.display = 'none';
             }
 
-            // Form submit handling
             document.getElementById('reservationForm').addEventListener('submit', function(e) {
                 e.preventDefault();
                 const name = nameInput.value.trim();
@@ -91,7 +86,6 @@
                     return;
                 }
 
-                // If user is logged-in and not guest -> persist reservation
                 if (currentUser && !currentUser.guest) {
                     const username = currentUser.username || name || 'Unknown';
                     const reservations = getReservations();
@@ -105,7 +99,6 @@
                     messageEl.textContent = 'Reservation saved. Thank you!';
                     renderSavedReservations(username);
                 } else {
-                    // Guest: do not persist; keep the form fields but do not save
                     messageEl.textContent = 'Reservation received (not saved for guests).';
                 }
             });
@@ -129,7 +122,6 @@
                 listEl.innerHTML = html;
             }
 
-            // Minimal escape to avoid injection in inserted HTML
             function escapeHtml(str) {
                 if (!str && str !== 0) return '';
                 return String(str).replace(/[&<>"']/g, function (s) {
