@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reservation - Sugar Cube Corner</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <h1 class="nav-title">Sugar Cube Corner</h1>
+            <div class="nav-links">
+                <a href="dashboard.html" class="button">Home</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <h2>Reservation</h2>
+
+        <form id="reservationForm" class="reservation-form">
+            <div class="input-group">
+                <label for="resName" class="label">Name</label>
+                <input type="text" id="resName" class="input" placeholder="Your name">
+            </div>
+
+            <div class="input-group">
+                <label for="resTime" class="label">Date & Time</label>
+                <input type="datetime-local" id="resTime" class="input">
+            </div>
+
+            <div style="margin-top:1rem;">
+                <button type="submit" class="button">Submit Reservation</button>
+            </div>
+        </form>
+
+        <div id="reservationMessage" style="margin-top:1rem;color:#fff;font-weight:600;"></div>
+
+        <section id="savedReservations" style="margin-top:2rem;">
+            <h3 style="color:#fff;">Your Saved Reservations</h3>
+            <div id="reservationsList"></div>
+        </section>
+    </div>
+
+    <script>
+        // Helper to read/write reservations (stored as array in localStorage)
+        function getReservations() {
+            try {
+                const raw = localStorage.getItem('reservations');
+                return raw ? JSON.parse(raw) : [];
+            } catch (e) {
+                return [];
+            }
+        }
+
+        function saveReservations(arr) {
+            localStorage.setItem('reservations', JSON.stringify(arr));
+        }
+
+        // On load: determine user state and prefill name if logged-in (not guest)
+        window.addEventListener('DOMContentLoaded', function() {
+            const userData = localStorage.getItem('user');
+            const nameInput = document.getElementById('resName');
+            const reservationsList = document.getElementById('reservationsList');
+
+            let currentUser = null;
+            if (userData) {
+                try { currentUser = JSON.parse(userData); } catch (e) { currentUser = null; }
+            }
+
+            // If logged-in and not a guest, prefill name and show saved reservations
+            if (currentUser && !currentUser.guest) {
+                if (currentUser.username) nameInput.value = currentUser.username;
+                renderSavedReservations(currentUser.username);
+            } else {
+                // Guest: leave name blank and hide saved reservations section
+                nameInput.value = '';
+                document.getElementById('savedReservations').style.display = 'none';
+            }
+
+            // Form submit handling
+            document.getElementById('reservationForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                const name = nameInput.value.trim();
+                const time = document.getElementById('resTime').value;
+                const messageEl = document.getElementById('reservationMessage');
+
+                if (!time) {
+                    messageEl.textContent = 'Please select a date and time.';
+                    return;
+                }
+
+                // If user is logged-in and not guest -> persist reservation
+                if (currentUser && !currentUser.guest) {
+                    const username = currentUser.username || name || 'Unknown';
+                    const reservations = getReservations();
+                    reservations.push({
+                        username: username,
+                        name: name,
+                        time: time,
+                        createdAt: new Date().toISOString()
+                    });
+                    saveReservations(reservations);
+                    messageEl.textContent = 'Reservation saved. Thank you!';
+                    renderSavedReservations(username);
+                } else {
+                    // Guest: do not persist; keep the form fields but do not save
+                    messageEl.textContent = 'Reservation received (not saved for guests).';
+                }
+            });
+
+            function renderSavedReservations(username) {
+                const listEl = document.getElementById('reservationsList');
+                const reservations = getReservations().filter(r => r.username === username);
+                if (reservations.length === 0) {
+                    listEl.innerHTML = '<p style="color:#fff;">No saved reservations.</p>';
+                    return;
+                }
+                const html = reservations.map(r => {
+                    const d = new Date(r.time);
+                    const created = new Date(r.createdAt);
+                    return `<div style="background:rgba(255,255,255,0.06);padding:0.75rem;border-radius:0.5rem;margin-bottom:0.5rem;color:#fff;">
+                        <div><strong>Name:</strong> ${escapeHtml(r.name || r.username)}</div>
+                        <div><strong>When:</strong> ${escapeHtml(d.toLocaleString())}</div>
+                        <div style="font-size:0.85rem;color:#f5e6d3;"><em>Saved: ${escapeHtml(created.toLocaleString())}</em></div>
+                    </div>`;
+                }).join('');
+                listEl.innerHTML = html;
+            }
+
+            // Minimal escape to avoid injection in inserted HTML
+            function escapeHtml(str) {
+                if (!str && str !== 0) return '';
+                return String(str).replace(/[&<>"']/g, function (s) {
+                    return ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[s];
+                });
+            }
+        });
+    </script>
+</body>
+</html>

@@ -10,7 +10,7 @@
 <body class="dashboard">
     <nav class="navbar">
         <div class="nav-container">
-            <h1 class="nav-title">🍰 Sweet Bakery</h1>
+            <h1 class="nav-title">Sugar Cube Corner</h1>
             <div class="nav-links">
                 <span class="user-greeting" id="userGreeting"></span>
                 <button class="button button-logout" id="logoutBtn">Logout</button>
@@ -25,22 +25,22 @@
         </section>
 
         <section class="categories">
-            <h2>Shop by Category</h2>
+            <h2>Explore</h2>
             <div class="category-grid">
-                <div class="category-card" onclick="goToCategory('Cakes')">
-                    <div class="category-icon">🎂</div>
-                    <h3>Cakes</h3>
-                    <p>Delicious homemade cakes</p>
+                <div class="category-card" onclick="goToPage('about.html')">
+                    <div class="category-icon">ℹ️</div>
+                    <h3>About</h3>
+                    <p>Learn about our bakery and story</p>
                 </div>
-                <div class="category-card" onclick="goToCategory('Cookies')">
-                    <div class="category-icon">🍪</div>
-                    <h3>Cookies</h3>
-                    <p>Fresh baked cookies</p>
+                <div class="category-card" onclick="goToPage('menu.html')">
+                    <div class="category-icon">📜</div>
+                    <h3>Menu</h3>
+                    <p>View our current menu and prices</p>
                 </div>
-                <div class="category-card" onclick="goToCategory('Pies')">
-                    <div class="category-icon">🥧</div>
-                    <h3>Pies</h3>
-                    <p>Delightful pies and tarts</p>
+                <div class="category-card" onclick="goToPage('reservation.html')">
+                    <div class="category-icon">📅</div>
+                    <h3>Reservation</h3>
+                    <p>Book a table or special order</p>
                 </div>
             </div>
         </section>
@@ -48,27 +48,26 @@
         <section class="featured">
             <h2>Featured Items</h2>
             <div class="featured-grid">
-                <div class="featured-item">
-                    <div class="item-image">🎂</div>
-                    <h3>Classic Chocolate Cake</h3>
-                    <p>$24.99</p>
+                <div class="featured-item" data-type="cake">
+                    <img class="featured-img" alt="Random cake">
+                    <h3>Classic Cakes</h3>
+                   
                 </div>
-                <div class="featured-item">
-                    <div class="item-image">🍪</div>
-                    <h3>Chocolate Chip Cookies</h3>
-                    <p>$8.99</p>
+                <div class="featured-item" data-type="cookie">
+                    <img class="featured-img" alt="Random cookie">
+                    <h3>Cookies</h3>
+                   
                 </div>
-                <div class="featured-item">
-                    <div class="item-image">🥧</div>
-                    <h3>Apple Pie</h3>
-                    <p>$16.99</p>
+                <div class="featured-item" data-type="pie">
+                    <img class="featured-img" alt="Random pie">
+                    <h3>Pies</h3>
+                    
                 </div>
             </div>
         </section>
     </div>
 
     <script>
-        // Display user greeting
         function displayUserGreeting() {
             const userGreeting = document.getElementById('userGreeting');
             const userData = localStorage.getItem('user');
@@ -79,27 +78,81 @@
             }
         }
 
-        // Navigate to category
-        function goToCategory(category) {
-            window.location.href = `${category}/index.html`;
+        function goToPage(page) {
+            window.location.href = page;
         }
 
-        // Logout functionality
         document.getElementById('logoutBtn').addEventListener('click', function() {
             localStorage.removeItem('auth');
             localStorage.removeItem('user');
             window.location.href = 'Login.html';
         });
 
-        // Initialize on page load
         window.addEventListener('DOMContentLoaded', function() {
             displayUserGreeting();
             
-            // Check if user is authenticated
             const auth = localStorage.getItem('auth');
             if (!auth) {
                 window.location.href = 'Login.html';
             }
+            const mapping = [
+                {type: 'cake', query: 'cake'},
+                {type: 'cookie', query: 'cookie'},
+                {type: 'pie', query: 'pie'}
+            ];
+                const cakeImages = [
+                    'Cakes/1200px-Angel_food_cake_2.jpg',
+                    'Cakes/Baked_cheesecake_with_raspberries_and_blueberries.jpg',
+                    'Cakes/Carrot_cake_at_America_Graffiti_(cropped).jpg',
+                    'Cakes/Golden-Krust-Rock-Cake.jpg',
+                    'Cakes/Hummingbird_Cake_(vegan)_1.jpg',
+                    'Cakes/KingCake.jpg',
+                    'Cakes/Pound_cake_2.jpg',
+                    'Cakes/Queen_cakes_cooling_on_a_wire_rack_(13475333725).jpg'
+                ];
+
+                const cookieImages = [
+                    'Cookies/2019-11-29_14_52_43_The_interior_of_a_tin_of_McKenzie_&_Lloyds_Danish_Style_Butter_Cookies_in_the_Dulles_section_of_Sterling,_Loudoun_County,_Virginia.jpg',
+                    'Cookies/960px-Rainbow_cookies_.jpg',
+                    'Cookies/BandW.jpg',
+                    'Cookies/Choc-Chip-Cookie.jpg',
+                    'Cookies/Flies_cemetery.jpg',
+                    'Cookies/Hallongrotta.JPG',
+                    'Cookies/Peanut_butter_cookies,_September_2009.jpg',
+                    'Cookies/VanillaMacaron.jpg'
+                ];
+
+                const pieImages = [
+                    'Pies/Blackberry_pie.jpg',
+                    'Pies/Buttermilk_Pie_with_Pecan_Brittle_at_Dyron\'s_Lowcountry.jpg',
+                    'Pies/Chocolate_cream_pie.jpg',
+                    'Pies/CoconutCustardPie.jpg',
+                    'Pies/Kentucky_Chocolate_walnut_pie_slice_Derby.JPG',
+                    'Pies/Lattice_apple_pie.png',
+                    'Pies/Mississippi_mud_pie_(7963392610).jpg',
+                    'Pies/Sugar_Cream_Pie_in_Indiana_-_Stierch.jpg'
+                ];
+
+                function pickRandom(arr) {
+                    return arr[Math.floor(Math.random() * arr.length)];
+                }
+
+                const cakeEl = document.querySelector('.featured-item[data-type="cake"] .featured-img');
+                const cookieEl = document.querySelector('.featured-item[data-type="cookie"] .featured-img');
+                const pieEl = document.querySelector('.featured-item[data-type="pie"] .featured-img');
+
+                if (cakeEl) {
+                    cakeEl.src = pickRandom(cakeImages);
+                    cakeEl.alt = 'Featured cake';
+                }
+                if (cookieEl) {
+                    cookieEl.src = pickRandom(cookieImages);
+                    cookieEl.alt = 'Featured cookie';
+                }
+                if (pieEl) {
+                    pieEl.src = pickRandom(pieImages);
+                    pieEl.alt = 'Featured pie';
+                }
         });
     </script>
 </body>
