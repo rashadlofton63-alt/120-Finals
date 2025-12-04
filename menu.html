@@ -5,8 +5,117 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Menu - Sugar Cube Corner</title>
     <link rel="stylesheet" href="style.css">
+    <style>
+        .menu-page-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem 1rem;
+        }
+
+        .menu-page-title {
+            text-align: center;
+            color: #fff;
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+        }
+
+        .menu-page-intro {
+            text-align: center;
+            color: #f5e6d3;
+            font-size: 1.1rem;
+            margin-bottom: 3rem;
+        }
+
+        .menu-category {
+            margin-bottom: 3rem;
+        }
+
+        .category-title {
+            color: #fff;
+            font-size: 2rem;
+            border-bottom: 3px solid #a0632f;
+            padding-bottom: 1rem;
+            margin-bottom: 2rem;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+        }
+
+        .menu-items-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+
+        .menu-item {
+            background: linear-gradient(to bottom, #f5e6d3 0%, #e8d5c4 100%);
+            border: 2px solid #a0632f;
+            border-radius: 1rem;
+            padding: 1.5rem;
+            text-align: center;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+            transition: all 0.3s ease;
+        }
+
+        .menu-item:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.3);
+        }
+
+        .menu-item.unavailable {
+            opacity: 0.6;
+        }
+
+        .menu-item h3 {
+            color: #3d2817;
+            font-size: 1.3rem;
+            margin: 0 0 0.5rem 0;
+        }
+
+        .menu-item-description {
+            color: #5a4a2f;
+            font-size: 0.95rem;
+            margin: 0.75rem 0;
+            line-height: 1.5;
+            min-height: 2.8rem;
+        }
+
+        .menu-item-price {
+            color: #8b6f47;
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin: 1rem 0;
+        }
+
+        .menu-item-status {
+            font-size: 0.85rem;
+            padding: 0.5rem 1rem;
+            border-radius: 0.25rem;
+            font-weight: 600;
+        }
+
+        .status-available {
+            background: #5cb85c;
+            color: #fff;
+        }
+
+        .status-unavailable {
+            background: #d9534f;
+            color: #fff;
+        }
+
+        .no-items-message {
+            background: rgba(245, 230, 211, 0.1);
+            border: 2px solid #a0632f;
+            border-radius: 1rem;
+            padding: 2rem;
+            text-align: center;
+            color: #f5e6d3;
+            font-size: 1.1rem;
+        }
+    </style>
 </head>
-<body>
+<body class="dashboard">
     <nav class="navbar">
         <div class="nav-container">
             <h1 class="nav-title">Sugar Cube Corner</h1>
@@ -16,9 +125,80 @@
         </div>
     </nav>
 
-    <div class="container">
-        <h2>Menu</h2>
-        <p>This is a placeholder Menu page. Add your items and prices here or link to product pages.</p>
+    <div class="menu-page-container">
+        <h1 class="menu-page-title">🍰 Our Menu</h1>
+        <p class="menu-page-intro">Delicious fresh-baked treats</p>
+
+        <div id="menusContainer"></div>
     </div>
+
+    <script>
+        function getMenuItems() {
+            try {
+                return JSON.parse(localStorage.getItem('menuItems')) || [];
+            } catch {
+                return [];
+            }
+        }
+
+        function escapeHtml(str) {
+            if (!str && str !== 0) return '';
+            return String(str).replace(/[&<>"']/g, function (s) {
+                return ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[s];
+            });
+        }
+
+        function renderMenu() {
+            const menuItems = getMenuItems();
+            const container = document.getElementById('menusContainer');
+
+            // Group items by category
+            const grouped = {};
+            menuItems.forEach(item => {
+                if (!grouped[item.category]) {
+                    grouped[item.category] = [];
+                }
+                grouped[item.category].push(item);
+            });
+
+            // Check if we have any items
+            if (Object.keys(grouped).length === 0) {
+                container.innerHTML = '<div class="no-items-message">No menu items available at the moment. Check back soon!</div>';
+                return;
+            }
+
+            // Render each category
+            const categories = ['Cakes', 'Cookies', 'Pies'];
+            let html = '';
+
+            categories.forEach(category => {
+                const items = grouped[category] || [];
+                if (items.length === 0) return;
+
+                html += `
+                    <div class="menu-category">
+                        <h2 class="category-title">${escapeHtml(category)}</h2>
+                        <div class="menu-items-grid">
+                            ${items.map(item => `
+                                <div class="menu-item ${!item.available ? 'unavailable' : ''}">
+                                    <h3>${escapeHtml(item.name)}</h3>
+                                    <div class="menu-item-description">${escapeHtml(item.description)}</div>
+                                    <div class="menu-item-price">$${parseFloat(item.price).toFixed(2)}</div>
+                                    <div class="menu-item-status ${item.available ? 'status-available' : 'status-unavailable'}">
+                                        ${item.available ? 'Available' : 'Unavailable'}
+                                    </div>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                `;
+            });
+
+            container.innerHTML = html;
+        }
+
+        // Initialize on page load
+        window.addEventListener('DOMContentLoaded', renderMenu);
+    </script>
 </body>
 </html>

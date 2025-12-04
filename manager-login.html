@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manager Login</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="login">
+    <div class="container">
+        <h2 class="container-title">Manager Login</h2>
+        <br>
+        <form class="loginForm" id="managerLoginForm">
+            <div class="input-group">
+                <label for="manager-username" class="label">Manager Username</label>
+                <input type="text" id="manager-username" class="input" placeholder="Enter manager username">
+                <span class="error-message" id="username-error"></span>
+            </div>
+            <br>
+            <div class="input-group">
+                <label for="manager-password" class="label">Manager Password</label>
+                <input type="password" id="manager-password" class="input" placeholder="Enter manager password">
+                <span class="error-message" id="password-error"></span>
+            </div>
+            <br>
+            <button class="button" type="submit">Login as Manager</button>
+        </form>
+        <div class="signup-link-container">
+            <p class="signup-text"><a href="Login.html" class="signup-link">Back to Customer Login</a></p>
+        </div>
+    </div>
+
+    <script>
+        const MANAGER_USERNAME = 'admin';
+        const MANAGER_PASSWORD = 'password123';
+
+        document.getElementById('managerLoginForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            const username = document.getElementById('manager-username').value.trim();
+            const password = document.getElementById('manager-password').value;
+            const usernameError = document.getElementById('username-error');
+            const passwordError = document.getElementById('password-error');
+
+            usernameError.innerText = '';
+            passwordError.innerText = '';
+
+            let hasError = false;
+
+            if (username === '') {
+                usernameError.innerText = 'Username cannot be blank';
+                hasError = true;
+            }
+
+            if (password === '') {
+                passwordError.innerText = 'Password cannot be blank';
+                hasError = true;
+            }
+
+            if (!hasError) {
+                if (username === MANAGER_USERNAME && password === MANAGER_PASSWORD) {
+                    localStorage.setItem('manager-auth', '1');
+                    localStorage.setItem('manager-user', JSON.stringify({ username: username }));
+                    window.location.href = 'manager.html';
+                } else {
+                    usernameError.innerText = 'Invalid username or password';
+                    hasError = true;
+                }
+            }
+        });
+    </script>
+</body>
+</html>
