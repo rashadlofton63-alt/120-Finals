@@ -67,6 +67,12 @@
         }
 
         window.addEventListener('DOMContentLoaded', function() {
+            const auth = localStorage.getItem('auth');
+            if (!auth) {
+                window.location.href = 'index.html';
+                return;
+            }
+            
             const userData = localStorage.getItem('user');
             const nameInput = document.getElementById('resName');
             const reservationsList = document.getElementById('reservationsList');

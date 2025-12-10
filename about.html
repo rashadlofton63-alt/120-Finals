@@ -26,6 +26,11 @@
 
     <script>
         window.addEventListener('DOMContentLoaded', function() {
+            const auth = localStorage.getItem('auth');
+            if (!auth) {
+                window.location.href = 'index.html';
+                return;
+            }
         });
     </script>
 </body>
