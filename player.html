@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Persistent Player - Sugar Cube Corner</title>
+    <style>
+        body { margin:0; font-family: Arial, sans-serif; background: linear-gradient(135deg,#fff0f8,#ffe4f0); }
+        .wrap { padding:12px; }
+        .controls { display:flex; gap:8px; align-items:center; }
+        button { padding:8px 12px; border-radius:6px; border:1px solid #ff69b4; background:#ff1493; color:#fff; font-weight:700; cursor:pointer; }
+        .close-btn { background:#666; }
+        .info { margin-top:8px; color:#ff1493; font-weight:700; }
+    </style>
+</head>
+<body>
+    <div class="wrap">
+        <div id="playerContainer"></div>
+        <div class="controls">
+            <button id="playBtn">Play</button>
+            <button id="pauseBtn">Pause</button>
+            <button id="seekBtn">Seek to last</button>
+            <button id="closeBtn" class="close-btn">Close</button>
+        </div>
+        <div class="info" id="status">Loading player...</div>
+    </div>
+
+    <script>
+        // Persistent YouTube player using IFrame API
+        let player;
+        let lastSavedTime = 0;
+
+        function onYouTubeIframeAPIReady() {
+            player = new YT.Player('playerContainer', {
+                height: '180',
+                width: '320',
+                videoId: 'NAgXygLxIV8',
+                playerVars: { autoplay: 0, controls: 1, modestbranding: 1, rel: 0 },
+                events: {
+                    onReady: onPlayerReady,
+                    onStateChange: onPlayerStateChange
+                }
+            });
+        }
+
+        function onPlayerReady() {
+            const storedTime = parseFloat(localStorage.getItem('persistentPlayerTime') || '0');
+            const storedState = localStorage.getItem('persistentPlayerState');
+            if (!isNaN(storedTime) && storedTime > 0) {
+                player.seekTo(storedTime, true);
+            }
+            if (storedState === '1') {
+                player.playVideo();
+            }
+            document.getElementById('status').textContent = 'Player ready';
+        }
+
+        function onPlayerStateChange(e) {
+            // save state and time periodically
+            if (player && player.getCurrentTime) {
+                lastSavedTime = player.getCurrentTime();
+                localStorage.setItem('persistentPlayerTime', String(lastSavedTime));
+                localStorage.setItem('persistentPlayerState', String(e.data));
+            }
+        }
+
+        // Save time every 2s
+        setInterval(() => {
+            if (player && player.getCurrentTime) {
+                const t = player.getCurrentTime();
+                localStorage.setItem('persistentPlayerTime', String(t));
+            }
+        }, 2000);
+
+        // Listen for messages from opener
+        window.addEventListener('message', (ev) => {
+            const data = ev.data || {};
+            if (data && data.command) {
+                if (!player) return;
+                if (data.command === 'play') player.playVideo();
+                if (data.command === 'pause') player.pauseVideo();
+                if (data.command === 'toggle') {
+                    const state = player.getPlayerState();
+                    if (state === 1) player.pauseVideo(); else player.playVideo();
+                }
+                if (data.command === 'seek' && typeof data.time === 'number') player.seekTo(data.time, true);
+                if (data.command === 'setVolume' && typeof data.volume === 'number') {
+                    // volume expected 0-100
+                    const v = Math.max(0, Math.min(100, data.volume));
+                    try { player.setVolume(v); localStorage.setItem('persistentPlayerVolume', String(v)); } catch (e) {}
+                }
+            }
+        }, false);
+
+        // Buttons
+        document.addEventListener('DOMContentLoaded', () => {
+            document.getElementById('playBtn').addEventListener('click', () => { if (player) player.playVideo(); });
+            document.getElementById('pauseBtn').addEventListener('click', () => { if (player) player.pauseVideo(); });
+            document.getElementById('seekBtn').addEventListener('click', () => {
+                const t = parseFloat(localStorage.getItem('persistentPlayerTime') || '0');
+                if (player) player.seekTo(t, true);
+            });
+            document.getElementById('closeBtn').addEventListener('click', () => window.close());
+        });
+
+        // load the IFrame API
+        (function loadYT(){
+            const s = document.createElement('script');
+            s.src = 'https://www.youtube.com/iframe_api';
+            document.head.appendChild(s);
+        })();
+    </script>
+</body>
+</html>

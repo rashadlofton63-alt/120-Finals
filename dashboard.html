@@ -68,26 +68,6 @@
     </div>
 
     <script>
-        function displayUserGreeting() {
-            const userGreeting = document.getElementById('userGreeting');
-            const userData = localStorage.getItem('user');
-            if (userData) {
-                const user = JSON.parse(userData);
-                const greeting = user.guest ? `Welcome, Guest!` : `Welcome, ${user.username}!`;
-                userGreeting.textContent = greeting;
-            }
-        }
-
-        function goToPage(page) {
-            window.location.href = page;
-        }
-
-        document.getElementById('logoutBtn').addEventListener('click', function() {
-            localStorage.removeItem('auth');
-            localStorage.removeItem('user');
-            window.location.href = 'Login.html';
-        });
-
         window.addEventListener('DOMContentLoaded', function() {
             displayUserGreeting();
             
@@ -100,7 +80,7 @@
                 {type: 'cookie', query: 'cookie'},
                 {type: 'pie', query: 'pie'}
             ];
-                const cakeImages = [
+            const cakeImages = [
                     'Cakes/1200px-Angel_food_cake_2.jpg',
                     'Cakes/Baked_cheesecake_with_raspberries_and_blueberries.jpg',
                     'Cakes/Carrot_cake_at_America_Graffiti_(cropped).jpg',
@@ -153,6 +133,26 @@
                     pieEl.src = pickRandom(pieImages);
                     pieEl.alt = 'Featured pie';
                 }
+        });
+
+        function displayUserGreeting() {
+            const userGreeting = document.getElementById('userGreeting');
+            const userData = localStorage.getItem('user');
+            if (userData) {
+                const user = JSON.parse(userData);
+                const greeting = user.guest ? `Welcome, Guest!` : `Welcome, ${user.username}!`;
+                userGreeting.textContent = greeting;
+            }
+        }
+
+        function goToPage(page) {
+            window.location.href = page;
+        }
+
+        document.getElementById('logoutBtn').addEventListener('click', function() {
+            localStorage.removeItem('auth');
+            localStorage.removeItem('user');
+            window.location.href = 'Login.html';
         });
     </script>
 </body>

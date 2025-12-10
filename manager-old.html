@@ -120,14 +120,6 @@
             color: #ff1493;
         }
 
-        .menu-item-card img {
-            width: 100%;
-            height: 150px;
-            object-fit: cover;
-            border-radius: 0.5rem;
-            margin-bottom: 0.75rem;
-        }
-
         .menu-item-card h3 {
             margin: 0 0 0.5rem 0;
             font-size: 1.2rem;
@@ -217,18 +209,6 @@
         .success-message.show {
             display: block;
         }
-
-        #imagePreview {
-            margin-top: 0.75rem;
-            text-align: center;
-        }
-
-        #previewImg {
-            max-width: 150px;
-            max-height: 150px;
-            border-radius: 0.5rem;
-            display: none;
-        }
     </style>
 </head>
 <body class="dashboard">
@@ -256,16 +236,6 @@
                             <option value="Cookies">Cookies</option>
                             <option value="Pies">Pies</option>
                         </select>
-                    </div>
-                </div>
-
-                <div class="form-group">
-                    <label for="itemImage">Select Image</label>
-                    <select id="itemImage" required>
-                        <option value="">Choose an image</option>
-                    </select>
-                    <div id="imagePreview">
-                        <img id="previewImg" src="" alt="Preview">
                     </div>
                 </div>
 
@@ -307,67 +277,7 @@
         let menuItems = [];
         let editingId = null;
 
-        const images = {
-            'Cakes': [
-                'Cakes/1200px-Angel_food_cake_2.jpg',
-                'Cakes/Baked_cheesecake_with_raspberries_and_blueberries.jpg',
-                'Cakes/Carrot_cake_at_America_Graffiti_(cropped).jpg',
-                'Cakes/Golden-Krust-Rock-Cake.jpg',
-                'Cakes/Hummingbird_Cake_(vegan)_1.jpg',
-                'Cakes/KingCake.jpg',
-                'Cakes/Pound_cake_2.jpg',
-                'Cakes/Queen_cakes_cooling_on_a_wire_rack_(13475333725).jpg'
-            ],
-            'Cookies': [
-                'Cookies/2019-11-29_14_52_43_The_interior_of_a_tin_of_McKenzie_&_Lloyds_Danish_Style_Butter_Cookies_in_the_Dulles_section_of_Sterling,_Loudoun_County,_Virginia.jpg',
-                'Cookies/960px-Rainbow_cookies_.jpg',
-                'Cookies/BandW.jpg',
-                'Cookies/Choc-Chip-Cookie.jpg',
-                'Cookies/Flies_cemetery.jpg',
-                'Cookies/Hallongrotta.JPG',
-                'Cookies/Peanut_butter_cookies,_September_2009.jpg',
-                'Cookies/VanillaMacaron.jpg'
-            ],
-            'Pies': [
-                'Pies/Blackberry_pie.jpg',
-                'Pies/Buttermilk_Pie_with_Pecan_Brittle_at_Dyron\'s_Lowcountry.jpg',
-                'Pies/Chocolate_cream_pie.jpg',
-                'Pies/CoconutCustardPie.jpg',
-                'Pies/Kentucky_Chocolate_walnut_pie_slice_Derby.JPG',
-                'Pies/Lattice_apple_pie.png',
-                'Pies/Mississippi_mud_pie_(7963392610).jpg',
-                'Pies/Sugar_Cream_Pie_in_Indiana_-_Stierch.jpg'
-            ]
-        };
-
-        // Sample menu items with descriptions and prices
-        const sampleItems = [
-            // Cakes
-            { name: 'Angel Food Cake', category: 'Cakes', image: 'Cakes/1200px-Angel_food_cake_2.jpg', description: 'Light and fluffy angel food cake', price: 19.99, available: true },
-            { name: 'Cheesecake with Berries', category: 'Cakes', image: 'Cakes/Baked_cheesecake_with_raspberries_and_blueberries.jpg', description: 'Creamy cheesecake topped with fresh raspberries and blueberries', price: 28.99, available: true },
-            { name: 'Carrot Cake', category: 'Cakes', image: 'Cakes/Carrot_cake_at_America_Graffiti_(cropped).jpg', description: 'Spiced carrot cake with cream cheese icing', price: 22.99, available: true },
-            { name: 'Rock Cake', category: 'Cakes', image: 'Cakes/Golden-Krust-Rock-Cake.jpg', description: 'Traditional golden rock cake with dried fruit', price: 14.99, available: true },
-            { name: 'Hummingbird Cake', category: 'Cakes', image: 'Cakes/Hummingbird_Cake_(vegan)_1.jpg', description: 'Vegan hummingbird cake with tropical flavors', price: 24.99, available: true },
-            { name: 'King Cake', category: 'Cakes', image: 'Cakes/KingCake.jpg', description: 'Traditional King Cake perfect for celebrations', price: 26.99, available: true },
-            { name: 'Pound Cake', category: 'Cakes', image: 'Cakes/Pound_cake_2.jpg', description: 'Classic buttery pound cake', price: 18.99, available: true },
-            { name: 'Queen Cakes', category: 'Cakes', image: 'Cakes/Queen_cakes_cooling_on_a_wire_rack_(13475333725).jpg', description: 'Delicate queen cakes fresh from the oven', price: 16.99, available: true },
-            // Cookies
-            { name: 'Danish Butter Cookies', category: 'Cookies', image: 'Cookies/2019-11-29_14_52_43_The_interior_of_a_tin_of_McKenzie_&_Lloyds_Danish_Style_Butter_Cookies_in_the_Dulles_section_of_Sterling,_Loudoun_County,_Virginia.jpg', description: 'Authentic Danish style butter cookies', price: 12.99, available: true },
-            { name: 'Rainbow Cookies', category: 'Cookies', image: 'Cookies/960px-Rainbow_cookies_.jpg', description: 'Colorful, vibrant cookies perfect for celebrations', price: 10.99, available: true },
-            { name: 'Black & White Cookies', category: 'Cookies', image: 'Cookies/BandW.jpg', description: 'Classic black and white frosted cookies', price: 9.99, available: true },
-            { name: 'Chocolate Chip Cookies', category: 'Cookies', image: 'Cookies/Choc-Chip-Cookie.jpg', description: 'Classic cookies loaded with chocolate chips', price: 8.99, available: true },
-            { name: 'Flies Cemetery', category: 'Cookies', image: 'Cookies/Flies_cemetery.jpg', description: 'Traditional cookie with chocolate chips', price: 7.99, available: true },
-            { name: 'Hallongrotta', category: 'Cookies', image: 'Cookies/Hallongrotta.JPG', description: 'Swedish raspberry jam cookie', price: 9.99, available: true },
-            { name: 'Peanut Butter Cookies', category: 'Cookies', image: 'Cookies/Peanut_butter_cookies,_September_2009.jpg', description: 'Soft and chewy peanut butter cookies', price: 9.99, available: true },
-            { name: 'Vanilla Macaron', category: 'Cookies', image: 'Cookies/VanillaMacaron.jpg', description: 'Delicate vanilla flavored macaron', price: 11.99, available: true },
-            // Pies
-            { name: 'Blackberry Pie', category: 'Pies', image: 'Pies/Blackberry_pie.jpg', description: 'Fresh blackberry pie with buttery crust', price: 18.99, available: true },
-            { name: 'Buttermilk Pie with Pecan', category: 'Pies', image: 'Pies/Buttermilk_Pie_with_Pecan_Brittle_at_Dyron\'s_Lowcountry.jpg', description: 'Creamy buttermilk pie with pecan brittle topping', price: 19.99, available: true },
-            { name: 'Chocolate Cream Pie', category: 'Pies', image: 'Pies/Chocolate_cream_pie.jpg', description: 'Silky chocolate filling with whipped cream topping', price: 14.99, available: true },
-            { name: 'Coconut Custard Pie', category: 'Pies', image: 'Pies/CoconutCustardPie.jpg', description: 'Rich coconut custard in flaky crust', price: 16.99, available: true },
-            { name: 'Kentucky Chocolate Walnut Pie', category: 'Pies', image: 'Pies/Kentucky_Chocolate_walnut_pie_slice_Derby.JPG', description: 'Derby-style chocolate walnut pie', price: 17.99, available: true }
-        ];
-
+        // Helper functions for localStorage
         function getMenuItems() {
             try {
                 return JSON.parse(localStorage.getItem('menuItems')) || [];
@@ -384,20 +294,7 @@
             return Date.now().toString();
         }
 
-        function initializeSampleItems() {
-            const existing = getMenuItems();
-            if (existing.length === 0) {
-                const items = sampleItems.map(item => ({
-                    ...item,
-                    id: generateId(),
-                    createdAt: new Date().toISOString()
-                }));
-                saveMenuItems(items);
-                return true;
-            }
-            return false;
-        }
-
+        // Check authentication
         function checkAuth() {
             const auth = localStorage.getItem('manager-auth');
             if (!auth) {
@@ -405,6 +302,7 @@
             }
         }
 
+        // Show success message
         function showSuccess(message) {
             const msg = document.getElementById('successMessage');
             msg.textContent = message;
@@ -412,6 +310,7 @@
             setTimeout(() => msg.classList.remove('show'), 3000);
         }
 
+        // Render menu items
         function renderMenuItems() {
             menuItems = getMenuItems();
             const container = document.getElementById('menuItemsList');
@@ -423,12 +322,11 @@
 
             container.innerHTML = menuItems.map(item => `
                 <div class="menu-item-card">
-                    <img src="${escapeHtml(item.image)}" alt="${escapeHtml(item.name)}">
                     <h3>${escapeHtml(item.name)}</h3>
                     <span class="category">${escapeHtml(item.category)}</span>
                     <div class="description">${escapeHtml(item.description)}</div>
                     <div class="price">$${parseFloat(item.price).toFixed(2)}</div>
-                    <div style="font-size: 0.9rem; color: #ff69b4;">
+                    <div style="font-size: 0.9rem; color: #5a4a2f;">
                         Status: <strong>${item.available ? 'Available' : 'Unavailable'}</strong>
                     </div>
                     <div class="menu-item-actions">
@@ -439,6 +337,7 @@
             `).join('');
         }
 
+        // Add/Update item
         function addOrUpdateItem(e) {
             e.preventDefault();
 
@@ -447,27 +346,23 @@
             const price = parseFloat(document.getElementById('itemPrice').value);
             const description = document.getElementById('itemDescription').value.trim();
             const available = document.getElementById('itemAvailable').value === 'true';
-            const image = document.getElementById('itemImage').value;
 
             if (!name || !category || isNaN(price) || price < 0) {
                 alert('Please fill in all required fields with valid data.');
                 return;
             }
 
-            if (!image) {
-                alert('Please select an image.');
-                return;
-            }
-
             if (editingId) {
+                // Update existing
                 menuItems = menuItems.map(item =>
                     item.id === editingId
-                        ? { ...item, name, category, price, description, available, image }
+                        ? { ...item, name, category, price, description, available }
                         : item
                 );
                 showSuccess('Menu item updated successfully!');
                 editingId = null;
             } else {
+                // Add new
                 const newItem = {
                     id: generateId(),
                     name,
@@ -475,7 +370,6 @@
                     price,
                     description,
                     available,
-                    image,
                     createdAt: new Date().toISOString()
                 };
                 menuItems.push(newItem);
@@ -487,19 +381,13 @@
             renderMenuItems();
         }
 
+        // Edit item
         function editItem(id) {
             const item = menuItems.find(i => i.id === id);
             if (!item) return;
 
             document.getElementById('itemName').value = item.name;
             document.getElementById('itemCategory').value = item.category;
-            document.getElementById('itemCategory').dispatchEvent(new Event('change'));
-            
-            setTimeout(() => {
-                document.getElementById('itemImage').value = item.image;
-                document.getElementById('itemImage').dispatchEvent(new Event('change'));
-            }, 10);
-
             document.getElementById('itemPrice').value = item.price;
             document.getElementById('itemDescription').value = item.description;
             document.getElementById('itemAvailable').value = item.available;
@@ -511,6 +399,7 @@
             document.getElementById('itemName').focus();
         }
 
+        // Delete item
         function deleteItem(id) {
             if (confirm('Are you sure you want to delete this menu item?')) {
                 menuItems = menuItems.filter(item => item.id !== id);
@@ -520,16 +409,16 @@
             }
         }
 
+        // Reset form
         function resetForm() {
             document.getElementById('menuItemForm').reset();
-            document.getElementById('previewImg').style.display = 'none';
-            document.getElementById('itemImage').innerHTML = '<option value="">Choose an image</option>';
             editingId = null;
             document.getElementById('submitBtn').textContent = 'Add Menu Item';
             document.getElementById('cancelBtn').style.display = 'none';
             document.getElementById('menuItemForm').classList.remove('edit-mode');
         }
 
+        // Escape HTML to prevent injection
         function escapeHtml(str) {
             if (!str && str !== 0) return '';
             return String(str).replace(/[&<>"']/g, function (s) {
@@ -537,31 +426,7 @@
             });
         }
 
-        document.getElementById('itemCategory').addEventListener('change', function() {
-            const category = this.value;
-            const imageSelect = document.getElementById('itemImage');
-            imageSelect.innerHTML = '<option value="">Choose an image</option>';
-            
-            if (category && images[category]) {
-                images[category].forEach(img => {
-                    const option = document.createElement('option');
-                    option.value = img;
-                    option.textContent = img.split('/').pop();
-                    imageSelect.appendChild(option);
-                });
-            }
-        });
-
-        document.getElementById('itemImage').addEventListener('change', function() {
-            const previewImg = document.getElementById('previewImg');
-            if (this.value) {
-                previewImg.src = this.value;
-                previewImg.style.display = 'block';
-            } else {
-                previewImg.style.display = 'none';
-            }
-        });
-
+        // Event listeners
         document.getElementById('menuItemForm').addEventListener('submit', addOrUpdateItem);
         document.getElementById('cancelBtn').addEventListener('click', resetForm);
         document.getElementById('logoutBtn').addEventListener('click', function() {
@@ -570,9 +435,9 @@
             window.location.href = 'manager-login.html';
         });
 
+        // Initialize
         window.addEventListener('DOMContentLoaded', function() {
             checkAuth();
-            initializeSampleItems();
             renderMenuItems();
         });
     </script>
