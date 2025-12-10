@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="script.js" defer></script>
+</head>
+<body class ="login">
+    <div class="container">
+        <h2 class="container-title">  Login </h2>
+        <br>
+        <form action="/dashboard.html" class="loginForm">
+            <div class="input-group">
+                <label for="username" class="label">Username</label>
+                <input type="text" id="username" class="input" placeholder="Enter your username">
+                <span class="error-message"></span>
+            </div>
+            <br>
+            <div class="input-group">
+                <label for="password" class="label">Password</label>
+                <input type="password" id="password" class="input" placeholder="Enter your password">
+                <span class="error-message"></span>
+            </div>
+            <br>
+            <button class="button" type="submit">Login</button>
+            <button class="button button-guest" type="button" id="guestBtn">Continue as Guest</button>
+        </form>
+        <div class="signup-link-container">
+            <p class="signup-text">Don't have an account? <a href="Signup.html" class="signup-link">Sign Up</a></p>
+            <p class="signup-text" style="margin-top: 1rem;">Are you a manager? <a href="manager-login.html" class="signup-link">Manager Login</a></p>
+        </div>
+    </div>
+    
+</body>
+</html>
